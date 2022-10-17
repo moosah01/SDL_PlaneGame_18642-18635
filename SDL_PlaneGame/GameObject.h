@@ -32,6 +32,7 @@ public:
 	float frictionCoff = 0.995;
 	SDL_Rect* unitBounds = new SDL_Rect();
 	SDL_Texture* unitTexture = NULL;
+	int missleCount = 0;
 
 	//gameObject();
 	GameObject(int x, int y);
