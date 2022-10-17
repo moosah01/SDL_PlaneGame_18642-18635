@@ -36,6 +36,9 @@
     <ClCompile Include="Nimble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Missle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Nimble.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Missle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

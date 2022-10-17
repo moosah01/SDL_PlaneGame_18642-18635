@@ -11,6 +11,7 @@
 #include "Nimble.h"
 #include <Windows.h>
 #include <thread>
+#include "Missle.h"
 
 
 
@@ -20,11 +21,13 @@ const int SCREEN_HEIGHT = 720;
 
 
 
-int main(int argc, char* argv) {
+int main(int argc, char* argv) 
+{
 
 	SDL_Renderer* gameRenderer;
 	doublyList gameobject_list;
 	doublyList bullet_list;
+	doublyList missile_list;
 
 	SDL_Surface* background;
 	SDL_Surface* WindowSurface;
@@ -161,48 +164,45 @@ int main(int argc, char* argv) {
 					break;
 				}
 
-				if (SDL_KEYDOWN == window_event.type)
+			if (SDL_KEYDOWN == window_event.type) 
+			{
+				if (SDLK_DOWN == window_event.key.keysym.sym) {
+					//player1->unitBounds->y = player1->unitBounds->y + 5;
+					player1->Translate(0, 2);
+				}
+				if (SDLK_UP == window_event.key.keysym.sym) {
+					//player1->unitBounds->y = player1->unitBounds->y - 5;
+					player1->Translate(0, -2);
+				}
+				if (SDLK_LEFT == window_event.key.keysym.sym) {
+					//player1->unitBounds->x = player1->unitBounds->x - 5;
+					player1->Translate(-2, 0);
+				}
+				if (SDLK_RIGHT == window_event.key.keysym.sym) {
+					//player1->unitBounds->x = player1->unitBounds->x + 5;
+					player1->Translate(2, 0);
+				}
+				if (SDLK_SPACE == window_event.key.keysym.sym) 
 				{
-					if (SDLK_ESCAPE == window_event.key.keysym.sym) {
-						game_running = false;
-					}
-					if (SDLK_DOWN == window_event.key.keysym.sym) {
-						//player1->unitBounds->y = player1->unitBounds->y + 5;
-						player1->Translate(0, 2);
-					}
-					if (SDLK_UP == window_event.key.keysym.sym) {
-						//player1->unitBounds->y = player1->unitBounds->y - 5;
-						player1->Translate(0, -2);
-					}
-					if (SDLK_LEFT == window_event.key.keysym.sym) {
-						//player1->unitBounds->x = player1->unitBounds->x - 5;
-						player1->Translate(-2, 0);
-					}
-					if (SDLK_RIGHT == window_event.key.keysym.sym) {
-						//player1->unitBounds->x = player1->unitBounds->x + 5;
-						player1->Translate(2, 0);
-					}
-					if (SDLK_SPACE == window_event.key.keysym.sym)
-					{
-						GameObject* bulletA = new Bullet(player1->unitBounds->x + 20, player1->unitBounds->y - 16);
-						GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
-						bulletA->isBulletFromEnemy = false;
-						bulletB->isBulletFromEnemy = false;
-						bulletA->setImage(gameRenderer, "media/player_bullet.png");
-						bulletB->setImage(gameRenderer, "media/player_bullet.png");
-						bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 20, player1->unitBounds->y - 16);
-						bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
+					GameObject* bulletA = new Bullet(player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+					GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
+					bulletA->isBulletFromEnemy = false;
+					bulletB->isBulletFromEnemy = false;
+					bulletA->setImage(gameRenderer, "media/player_bullet.png");
+					bulletB->setImage(gameRenderer, "media/player_bullet.png");
+					bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+					bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
 
 						bullet_list.insertAtTail(bulletA);
 						bullet_list.insertAtTail(bulletB);
 					}
 
-					if (SDLK_b == window_event.key.keysym.sym) {
+				if (SDLK_b == window_event.key.keysym.sym) {
+					
 
-
-					}
 				}
 			}
+		}
 
 			if (gameFrames % 250 == 0)
 			{
@@ -313,26 +313,25 @@ int main(int argc, char* argv) {
 					xDiff = tempEnem->unitBounds->x - player1->unitBounds->x;
 					yDiff = tempEnem->unitBounds->y - player1->unitBounds->y;
 
-					if (xDiff >= -62 && xDiff <= 62 && yDiff >= 0 && yDiff <= 62)
-					{
-						//game_running = false;
-						std::cout << "PlayerHit" << std::endl;
-					}
+				if (xDiff >= -62 && xDiff <= 62 && yDiff >= 0 && yDiff <= 62)
+				{
+					//game_running = false;
+					std::cout << "PlayerHit" << std::endl;
 				}
 			}
+		}
 
-			Node* tempBullet = bullet_list.returnHead();
-			Node* tempEnem = gameobject_list.returnHead();
-
-			player1->Move();
-			SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
-			SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
-			SDL_RenderCopy(gameRenderer, escape, NULL, esc);
-			while (tempBullet != nullptr)
-			{
-				if (tempBullet != nullptr) {
-					tempBullet->gmObject->Move();
-				}
+		Node* tempBullet = bullet_list.returnHead();
+		Node* tempEnem = gameobject_list.returnHead();
+		
+		player1->Move();
+		SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
+		SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
+		while (tempBullet != nullptr)
+		{
+			if (tempBullet != nullptr) {
+				tempBullet->gmObject->Move();
+			}
 
 				if (tempBullet->gmObject->Alive() == true)
 				{
@@ -346,11 +345,11 @@ int main(int argc, char* argv) {
 				}
 			}
 
-			while (tempEnem != nullptr)
-			{
-				if (tempEnem != nullptr) {
-					tempEnem->gmObject->Move();
-				}
+		while (tempEnem != nullptr)
+		{
+			if (tempEnem != nullptr) {
+				tempEnem->gmObject->Move();
+			}
 
 				if (tempEnem->gmObject->Alive() == true)
 				{
@@ -437,20 +436,20 @@ int main(int argc, char* argv) {
 				}
 			}
 
-			for (int count = 0; count < gameobject_list.returnSize(); count++)
+		for (int count = 0; count < gameobject_list.returnSize(); count++)
+		{
+			if (gameobject_list.returnAt(count)->Alive() == false)
 			{
-				if (gameobject_list.returnAt(count)->Alive() == false)
-				{
-					SDL_DestroyTexture(gameobject_list.returnAt(count)->unitTexture);
-					gameobject_list.deleteNode(count);
-					// now takes into account the middle of the list
-					//gameobject_list.deleteNodeHead();
-				}
+				SDL_DestroyTexture(gameobject_list.returnAt(count)->unitTexture);
+				gameobject_list.deleteNode(count);
+				// now takes into account the middle of the list
+				//gameobject_list.deleteNodeHead();
 			}
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(2));
 		}
+		
+		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}
+
 	SDL_FreeSurface(background);
 	SDL_FreeSurface(WindowSurface);
 

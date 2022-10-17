@@ -9,6 +9,7 @@
 Player::Player(int x, int y):GameObject(x, y) {
 
 	alive = true;
+	this->missleCount = 10;
 
 	ascii_art.append(L" || ");
 	ascii_art.append(L"@  @");
