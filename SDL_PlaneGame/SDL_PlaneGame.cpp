@@ -21,7 +21,7 @@ const int SCREEN_HEIGHT = 720;
 
 
 
-int main(int argc, char* argv) 
+int main(int argc, char* argv)
 {
 
 	SDL_Renderer* gameRenderer;
@@ -31,10 +31,10 @@ int main(int argc, char* argv)
 
 	SDL_Surface* background;
 	SDL_Surface* WindowSurface;
-	
+
 
 	GameObject* player1 = new Player(200, 520);
-	
+
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv)
 	SDL_Event window_event;
 
 	background = IMG_Load("media/gameBG.jpg");
-	
+
 
 	if (background == NULL) {
 		std::cout << "Could not load background image. Error Code : " << SDL_GetError() << std::endl;
@@ -72,9 +72,9 @@ int main(int argc, char* argv)
 	//Player = IMG_LoadTexture(R, "media/player_sprite.png");
 	SDL_Texture* gameBG = IMG_LoadTexture(gameRenderer, "media/gameBG.jpg");
 
-	SDL_Texture* button = IMG_LoadTexture(gameRenderer,"C:/Users/shahe/Desktop/final game dev/button.png");
-	SDL_Texture* text = IMG_LoadTexture(gameRenderer,"C:/Users/shahe/Desktop/final game dev/text.png");
-	SDL_Texture* escape = IMG_LoadTexture(gameRenderer,"C:/Users/shahe/Desktop/final game dev/x.png");
+	SDL_Texture* button = IMG_LoadTexture(gameRenderer, "C:/Users/shahe/Desktop/final game dev/button.png");
+	SDL_Texture* text = IMG_LoadTexture(gameRenderer, "C:/Users/shahe/Desktop/final game dev/text.png");
+	SDL_Texture* escape = IMG_LoadTexture(gameRenderer, "C:/Users/shahe/Desktop/final game dev/x.png");
 	SDL_Rect* esc = new SDL_Rect();
 	esc->x = 10;
 	esc->y = 20;
@@ -85,9 +85,9 @@ int main(int argc, char* argv)
 	player1->setUnitBounds(64, 64, 200, 520);
 
 	/*SDL_Rect* Player_Rect = new SDL_Rect();
-	Player_Rect->w = 64; 
-	Player_Rect->h = 64; 
-	Player_Rect->x = 200;  
+	Player_Rect->w = 64;
+	Player_Rect->h = 64;
+	Player_Rect->x = 200;
 	Player_Rect->y = 1040 / 2;*/
 
 	SDL_Rect* Background_Rect = new SDL_Rect();
@@ -105,7 +105,7 @@ int main(int argc, char* argv)
 	bool game_running = false;
 	bool flag = true;
 
-	
+
 	while (flag) {
 		//if (SDL_PollEvent(&window_event))
 		//{
@@ -154,55 +154,55 @@ int main(int argc, char* argv)
 
 		while (game_running)
 		{
-		
+
 			gameFrames++;
 			if (SDL_PollEvent(&window_event))
 			{
 
 				if (SDL_QUIT == window_event.type) {
-					flag = false; 
+					flag = false;
 					break;
 				}
 
-			if (SDL_KEYDOWN == window_event.type) 
-			{
-				if (SDLK_DOWN == window_event.key.keysym.sym) {
-					//player1->unitBounds->y = player1->unitBounds->y + 5;
-					player1->Translate(0, 2);
-				}
-				if (SDLK_UP == window_event.key.keysym.sym) {
-					//player1->unitBounds->y = player1->unitBounds->y - 5;
-					player1->Translate(0, -2);
-				}
-				if (SDLK_LEFT == window_event.key.keysym.sym) {
-					//player1->unitBounds->x = player1->unitBounds->x - 5;
-					player1->Translate(-2, 0);
-				}
-				if (SDLK_RIGHT == window_event.key.keysym.sym) {
-					//player1->unitBounds->x = player1->unitBounds->x + 5;
-					player1->Translate(2, 0);
-				}
-				if (SDLK_SPACE == window_event.key.keysym.sym) 
+				if (SDL_KEYDOWN == window_event.type)
 				{
-					GameObject* bulletA = new Bullet(player1->unitBounds->x + 20, player1->unitBounds->y - 16);
-					GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
-					bulletA->isBulletFromEnemy = false;
-					bulletB->isBulletFromEnemy = false;
-					bulletA->setImage(gameRenderer, "media/player_bullet.png");
-					bulletB->setImage(gameRenderer, "media/player_bullet.png");
-					bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 20, player1->unitBounds->y - 16);
-					bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
+					if (SDLK_DOWN == window_event.key.keysym.sym) {
+						//player1->unitBounds->y = player1->unitBounds->y + 5;
+						player1->Translate(0, 2);
+					}
+					if (SDLK_UP == window_event.key.keysym.sym) {
+						//player1->unitBounds->y = player1->unitBounds->y - 5;
+						player1->Translate(0, -2);
+					}
+					if (SDLK_LEFT == window_event.key.keysym.sym) {
+						//player1->unitBounds->x = player1->unitBounds->x - 5;
+						player1->Translate(-2, 0);
+					}
+					if (SDLK_RIGHT == window_event.key.keysym.sym) {
+						//player1->unitBounds->x = player1->unitBounds->x + 5;
+						player1->Translate(2, 0);
+					}
+					if (SDLK_SPACE == window_event.key.keysym.sym)
+					{
+						GameObject* bulletA = new Bullet(player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+						GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
+						bulletA->isBulletFromEnemy = false;
+						bulletB->isBulletFromEnemy = false;
+						bulletA->setImage(gameRenderer, "media/player_bullet.png");
+						bulletB->setImage(gameRenderer, "media/player_bullet.png");
+						bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+						bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
 
 						bullet_list.insertAtTail(bulletA);
 						bullet_list.insertAtTail(bulletB);
 					}
 
-				if (SDLK_b == window_event.key.keysym.sym) {
-					
+					if (SDLK_b == window_event.key.keysym.sym) {
 
+
+					}
 				}
 			}
-		}
 
 			if (gameFrames % 250 == 0)
 			{
@@ -313,25 +313,25 @@ int main(int argc, char* argv)
 					xDiff = tempEnem->unitBounds->x - player1->unitBounds->x;
 					yDiff = tempEnem->unitBounds->y - player1->unitBounds->y;
 
-				if (xDiff >= -62 && xDiff <= 62 && yDiff >= 0 && yDiff <= 62)
-				{
-					//game_running = false;
-					std::cout << "PlayerHit" << std::endl;
+					if (xDiff >= -62 && xDiff <= 62 && yDiff >= 0 && yDiff <= 62)
+					{
+						//game_running = false;
+						std::cout << "PlayerHit" << std::endl;
+					}
 				}
 			}
-		}
 
-		Node* tempBullet = bullet_list.returnHead();
-		Node* tempEnem = gameobject_list.returnHead();
-		
-		player1->Move();
-		SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
-		SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
-		while (tempBullet != nullptr)
-		{
-			if (tempBullet != nullptr) {
-				tempBullet->gmObject->Move();
-			}
+			Node* tempBullet = bullet_list.returnHead();
+			Node* tempEnem = gameobject_list.returnHead();
+
+			player1->Move();
+			SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
+			SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
+			while (tempBullet != nullptr)
+			{
+				if (tempBullet != nullptr) {
+					tempBullet->gmObject->Move();
+				}
 
 				if (tempBullet->gmObject->Alive() == true)
 				{
@@ -345,11 +345,11 @@ int main(int argc, char* argv)
 				}
 			}
 
-		while (tempEnem != nullptr)
-		{
-			if (tempEnem != nullptr) {
-				tempEnem->gmObject->Move();
-			}
+			while (tempEnem != nullptr)
+			{
+				if (tempEnem != nullptr) {
+					tempEnem->gmObject->Move();
+				}
 
 				if (tempEnem->gmObject->Alive() == true)
 				{
@@ -436,31 +436,32 @@ int main(int argc, char* argv)
 				}
 			}
 
-		for (int count = 0; count < gameobject_list.returnSize(); count++)
-		{
-			if (gameobject_list.returnAt(count)->Alive() == false)
+			for (int count = 0; count < gameobject_list.returnSize(); count++)
 			{
-				SDL_DestroyTexture(gameobject_list.returnAt(count)->unitTexture);
-				gameobject_list.deleteNode(count);
-				// now takes into account the middle of the list
-				//gameobject_list.deleteNodeHead();
+				if (gameobject_list.returnAt(count)->Alive() == false)
+				{
+					SDL_DestroyTexture(gameobject_list.returnAt(count)->unitTexture);
+					gameobject_list.deleteNode(count);
+					// now takes into account the middle of the list
+					//gameobject_list.deleteNodeHead();
+				}
 			}
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
 		}
-		
-		std::this_thread::sleep_for(std::chrono::milliseconds(2));
+
+		SDL_FreeSurface(background);
+		SDL_FreeSurface(WindowSurface);
+
+		background = NULL;
+		WindowSurface = NULL;
+
+		SDL_DestroyWindow(window);
+		SDL_DestroyRenderer(gameRenderer);
+
+		SDL_Quit();
+
+		this_thread::sleep_for(10000ms);
+		return EXIT_SUCCESS;
 	}
-
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(WindowSurface);
-
-	background = NULL;
-	WindowSurface = NULL;
-
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(gameRenderer);
-
-	SDL_Quit();
-
-	this_thread::sleep_for(10000ms);
-	return EXIT_SUCCESS;
 }
