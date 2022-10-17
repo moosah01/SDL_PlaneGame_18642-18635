@@ -5,6 +5,8 @@ Ranger::Ranger(int x, int y) :GameObject(x, y)
 {
 	alive = true;
 	this->isHit = false;
+	this->Health = 3;
+	this->isRanger = true;
 
 	ascii_art.append(L"    ");
 	ascii_art.append(L" @@ ");
@@ -47,6 +49,10 @@ void Ranger::Move()
 	unitBounds->x = this->x + (int)tx;
 	//y = y + (int)ty;
 
+	if (Health < 1) {
+		alive = false;
+	}
+
 	if (unitBounds->x < 0)
 	{
 		unitBounds->x = 0;
@@ -54,7 +60,7 @@ void Ranger::Move()
 
 	else if (unitBounds->x > 1216)
 	{
-		unitBounds->x = 116;
+		unitBounds->x = 1216;
 	}
 
 	if (unitBounds->y < 656)

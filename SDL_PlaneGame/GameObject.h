@@ -28,6 +28,7 @@ public:
 	bool isBulletFromEnemy;
 	bool canDodge = false;
 	bool isRanger = false;
+	int Health = 0;
 	float frictionCoff = 0.995;
 	SDL_Rect* unitBounds = new SDL_Rect();
 	SDL_Texture* unitTexture = NULL;
@@ -45,6 +46,7 @@ public:
 	void setUnitBounds(int widthBound, int heightBound, int xPos, int yPos);
 	//void fireGun(int xBound, int yBound);
 	//void setSDLRECT(int x, int y);
+
 
 	void Translate(float xVal, float yVal);
 };

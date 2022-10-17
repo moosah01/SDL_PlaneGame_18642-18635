@@ -86,8 +86,12 @@ int main(int argc, char* argv) {
 	int bullYBound = 0;
 	int gameFrames = 0;
 	int random = 0;
+	int randomDodge = 0;
+	int xDiff = 0;
+	int yDiff = 0;
+	bool game_running = true;
 
-	while (true) 
+	while (game_running) 
 	{
 		gameFrames++;
 		if (SDL_PollEvent(&window_event)) 
@@ -129,6 +133,7 @@ int main(int argc, char* argv) {
 					bullet_list.insertAtTail(bulletA);
 					bullet_list.insertAtTail(bulletB);
 				}
+
 				if (SDLK_b == window_event.key.keysym.sym) {
 					
 
@@ -149,7 +154,6 @@ int main(int argc, char* argv) {
 			newRanger->isRanger = true;
 			gameobject_list.insertAtTail(newRanger);
 
-			
 
 		}
 
@@ -157,12 +161,12 @@ int main(int argc, char* argv) {
 		{
 
 			random = rand() % 1216;
-			GameObject* newNimble= new Nimble(random, 0);
+			GameObject* newNimble= new Nimble(520, 0);
 			//add bullet mechanism here
 			//set bullet from enemy to true
 
 			newNimble->setImage(gameRenderer, "media/nimbleEnem.png");
-			newNimble->setUnitBounds(64, 64, random, 0);
+			newNimble->setUnitBounds(64, 64, 520, 0);
 			newNimble->isRanger = false;
 
 			gameobject_list.insertAtTail(newNimble);
@@ -170,11 +174,92 @@ int main(int argc, char* argv) {
 			
 		}
 
+		//bullet & plane
+		for (int countBullet = 0; countBullet < bullet_list.returnSize(); countBullet++)
+		{
+			GameObject* tempBull = bullet_list.returnAt(countBullet);
+			//player bullet & enemy plane
+			if (tempBull->alive != false && tempBull->isBulletFromEnemy == false) 
+			{
+				for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
+				{
+					GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
+					if (tempEnem->alive != false)
+					{
+						xDiff = tempBull->unitBounds->x - tempEnem->unitBounds->x;
+						yDiff = tempBull->unitBounds->y - tempEnem->unitBounds->y;
+
+						 if (tempEnem->isRanger == false)
+						 {
+
+							 if (yDiff <= 200 && yDiff >= 128)
+							 {
+								 if (xDiff >= -7 && xDiff <= 71)
+								 {
+									 if (xDiff >= -7 && xDiff <= 32)
+									 {
+										 tempEnem->Translate(2, 0);
+									 }
+									 else if (xDiff >=33 && xDiff<=71)
+									 {
+										 tempEnem->Translate(-2, 0);
+									 }
+								 }
+							 }
+							 if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
+							 {
+								 tempBull->alive = false;
+								 tempEnem->Health--;
+								 //tempEnem->alive = false;
+							 }
+						 }
+						 else if (tempEnem->isRanger == true)
+						 {
+							 if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
+							 {
+								 tempBull->alive = false;
+								 tempEnem->Health--;
+								 //tempEnem->alive = false;
+							 }
+						 }
+						
+					}
+				}
+			}
+			//enemy bullet and player plane
+			else if (tempBull->alive != false && tempBull->isBulletFromEnemy == true)
+			{
+				xDiff = tempBull->unitBounds->x - player1->unitBounds->x;
+				yDiff = tempBull->unitBounds->y - player1->unitBounds->y;
+
+				if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 62)
+				{
+					//game_running = false;
+					std::cout << "PlayerHit"<<std::endl;
+				}
+
+			}
+			
+		}
+		//player and enemy plane
+		for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
+		{
+			GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
+			if (tempEnem->alive != false)
+			{
+				xDiff = tempEnem->unitBounds->x - player1->unitBounds->x;
+				yDiff = tempEnem->unitBounds->y - player1->unitBounds->y;
+
+				if (xDiff >= -62 && xDiff <= 62 && yDiff >= 0 && yDiff <= 62)
+				{
+					//game_running = false;
+					std::cout << "PlayerHit" << std::endl;
+				}
+			}
+		}
 
 		Node* tempBullet = bullet_list.returnHead();
 		Node* tempEnem = gameobject_list.returnHead();
-
-
 		
 		player1->Move();
 		SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
@@ -205,7 +290,7 @@ int main(int argc, char* argv) {
 
 			if (tempEnem->gmObject->Alive() == true)
 			{
-				if (gameFrames % 250 == 0)
+				if (gameFrames % 5000 == 0)
 				{
 					random = rand() % 10;
 					if (random < 6)
@@ -233,7 +318,7 @@ int main(int argc, char* argv) {
 						bullet_list.insertAtTail(enemyBulletB);
 					}	
 				}
-				else if (gameFrames % 400 == 0)
+				else if (gameFrames % 2000 == 0)
 				{
 					random = rand() % 10;
 					if (random < 6)
@@ -270,6 +355,8 @@ int main(int argc, char* argv) {
 				tempEnem = tempEnem->next;
 			}
 		}
+
+
 
 		SDL_RenderPresent(gameRenderer);
 		SDL_RenderClear(gameRenderer); 
@@ -311,5 +398,6 @@ int main(int argc, char* argv) {
 
 	SDL_Quit();
 
+	this_thread::sleep_for(10000ms);
 	return EXIT_SUCCESS;
 }
