@@ -54,7 +54,7 @@ void Nimble::Move()
 
 	else if (unitBounds->x > 1216)
 	{
-		unitBounds->x = 116;
+		unitBounds->x = 1216;
 	}
 
 	if (unitBounds->y <656)

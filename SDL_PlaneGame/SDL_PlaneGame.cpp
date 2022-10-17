@@ -86,6 +86,8 @@ int main(int argc, char* argv) {
 	int bullYBound = 0;
 	int gameFrames = 0;
 	int random = 0;
+	int xDiff = 0;
+	int yDiff = 0;
 
 	while (true) 
 	{
@@ -149,7 +151,6 @@ int main(int argc, char* argv) {
 			newRanger->isRanger = true;
 			gameobject_list.insertAtTail(newRanger);
 
-			
 
 		}
 
@@ -170,6 +171,31 @@ int main(int argc, char* argv) {
 			
 		}
 
+		//player bullet and enemy plane
+
+		for (int countBullet = 0; countBullet < bullet_list.returnSize(); countBullet++)
+		{
+			GameObject* tempBull = bullet_list.returnAt(countBullet);
+			if (tempBull->alive != false && tempBull->isBulletFromEnemy == false) 
+			{
+				for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
+				{
+					GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
+					if (tempEnem->alive != false)
+					{
+						xDiff = tempBull->unitBounds->x - tempEnem->unitBounds->x;
+						yDiff = tempBull->unitBounds->y - tempEnem->unitBounds->y;
+
+						if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
+						{
+							tempBull->alive = false;
+							tempEnem->alive = false;
+
+						}
+					}
+				}
+			}
+		}
 
 		Node* tempBullet = bullet_list.returnHead();
 		Node* tempEnem = gameobject_list.returnHead();
