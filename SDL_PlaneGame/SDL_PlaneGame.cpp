@@ -21,7 +21,7 @@ const int SCREEN_HEIGHT = 720;
 
 
 
-int main(int argc, char* argv) 
+int main(int argc, char* argv)
 {
 
 	SDL_Renderer* gameRenderer;
@@ -31,10 +31,10 @@ int main(int argc, char* argv)
 
 	SDL_Surface* background;
 	SDL_Surface* WindowSurface;
-	
+
 
 	GameObject* player1 = new Player(200, 520);
-	
+
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) 
 	{
@@ -58,7 +58,7 @@ int main(int argc, char* argv)
 	SDL_Event window_event;
 
 	background = IMG_Load("media/gameBG.jpg");
-	
+
 
 	if (background == NULL) {
 		std::cout << "Could not load background image. Error Code : " << SDL_GetError() << std::endl;
@@ -73,12 +73,22 @@ int main(int argc, char* argv)
 	//Player = IMG_LoadTexture(R, "media/player_sprite.png");
 	SDL_Texture* gameBG = IMG_LoadTexture(gameRenderer, "media/gameBG.jpg");
 
+	SDL_Texture* button = IMG_LoadTexture(gameRenderer, "C:/Users/shahe/Desktop/final game dev/button.png");
+	SDL_Texture* text = IMG_LoadTexture(gameRenderer, "C:/Users/shahe/Desktop/final game dev/text.png");
+	SDL_Texture* escape = IMG_LoadTexture(gameRenderer, "C:/Users/shahe/Desktop/final game dev/x.png");
+	SDL_Rect* esc = new SDL_Rect();
+	esc->x = 10;
+	esc->y = 20;
+	esc->w = 32;
+	esc->h = 16;
+
+
 	player1->setUnitBounds(64, 64, 200, 520);
 
 	/*SDL_Rect* Player_Rect = new SDL_Rect();
-	Player_Rect->w = 64; 
-	Player_Rect->h = 64; 
-	Player_Rect->x = 200;  
+	Player_Rect->w = 64;
+	Player_Rect->h = 64;
+	Player_Rect->x = 200;
 	Player_Rect->y = 1040 / 2;*/
 
 	SDL_Rect* Background_Rect = new SDL_Rect();
@@ -93,394 +103,366 @@ int main(int argc, char* argv)
 	int randomDodge = 0;
 	int xDiff = 0;
 	int yDiff = 0;
-	bool game_running = true;
+	bool game_running = false;
+	bool flag = true;
 
-	while (game_running) 
-	{
-		gameFrames++;
-		if (SDL_PollEvent(&window_event)) 
-		{
 
-			if (SDL_QUIT == window_event.type) {
-				break;
-			}
+	while (flag) {
+		//if (SDL_PollEvent(&window_event))
+		//{
 
-			if (SDL_KEYDOWN == window_event.type) 
+		//	if (SDL_QUIT == window_event.type) {
+		//		break;
+		//	}
+		//}
+
+		while (!game_running) {
+
+			SDL_Rect* rect = new SDL_Rect();
+			rect->x = 500;
+			rect->y = 550;
+			rect->h = 64;
+			rect->w = 256;
+
+
+			SDL_RenderClear(gameRenderer);
+			SDL_RenderCopy(gameRenderer, gameBG, NULL, NULL);
+			SDL_RenderCopy(gameRenderer, button, NULL, rect);
+			SDL_RenderCopy(gameRenderer, text, NULL, rect);
+			SDL_RenderCopy(gameRenderer, escape, NULL, esc);
+			SDL_RenderPresent(gameRenderer);
+			if (SDL_PollEvent(&window_event))
 			{
-				if (SDLK_DOWN == window_event.key.keysym.sym) {
-					//player1->unitBounds->y = player1->unitBounds->y + 5;
-					player1->Translate(0, 2);
+
+				if (SDL_QUIT == window_event.type) {
+					flag = false;
+					break;
 				}
-				if (SDLK_UP == window_event.key.keysym.sym) {
-					//player1->unitBounds->y = player1->unitBounds->y - 5;
-					player1->Translate(0, -2);
-				}
-				if (SDLK_LEFT == window_event.key.keysym.sym) {
-					//player1->unitBounds->x = player1->unitBounds->x - 5;
-					player1->Translate(-2, 0);
-				}
-				if (SDLK_RIGHT == window_event.key.keysym.sym) {
-					//player1->unitBounds->x = player1->unitBounds->x + 5;
-					player1->Translate(2, 0);
-				}
-				if (SDLK_SPACE == window_event.key.keysym.sym) 
+
+				if (SDL_KEYDOWN == window_event.type)
 				{
-					GameObject* bulletA = new Bullet(player1->unitBounds->x + 16, player1->unitBounds->y - 16);
-					GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
-					bulletA->isBulletFromEnemy = false;
-					bulletB->isBulletFromEnemy = false;
-					bulletA->setImage(gameRenderer, "media/player_bullet.png");
-					bulletB->setImage(gameRenderer, "media/player_bullet.png");
-					bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 16, player1->unitBounds->y - 16);
-					bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
-
-					bullet_list.insertAtTail(bulletA);
-					bullet_list.insertAtTail(bulletB);
-				}
-
-				if (SDLK_b == window_event.key.keysym.sym) 
-				{
-					
-					if (player1->missleCount <= 10 && player1->missleCount >=1) 
-					{
-						std::cout << player1->missleCount << std::endl;
-						GameObject* missle = new Missle(player1->unitBounds->x + 32, player1->unitBounds->y - 16);
-						missle->setImage(gameRenderer, "media/rocket.png");
-						missle->setUnitBounds(16, 32, player1->unitBounds->x + 24, player1->unitBounds->y - 16);
-
-						missile_list.insertAtTail(missle);			
-						player1->missleCount = player1->missleCount--;
+					if (SDLK_SPACE == window_event.key.keysym.sym) {
+						game_running = true;
+					}
+					if (SDLK_ESCAPE == window_event.key.keysym.sym) {
+						flag = false;
+						break;
 					}
 				}
 			}
-		}
-
-		if (gameFrames % 250 == 0)
-		{
-			random = rand() % 1216;
-			GameObject* newRanger = new Ranger(random, 0);
-			//add bullet mechanism here
-			//set bullet from enemy to true
-
-			newRanger->setImage(gameRenderer, "media/rangerEnem.png");
-			newRanger->setUnitBounds(64, 64, random, 0);
-
-			newRanger->isRanger = true;
-			gameobject_list.insertAtTail(newRanger);
-
 
 		}
 
-		if (gameFrames %  400 == 0)
+		while (game_running)
 		{
 
-			random = rand() % 1216;
-			GameObject* newNimble= new Nimble(520, 0);
-			//add bullet mechanism here
-			//set bullet from enemy to true
-
-			newNimble->setImage(gameRenderer, "media/nimbleEnem.png");
-			newNimble->setUnitBounds(64, 64, 520, 0);
-			newNimble->isRanger = false;
-
-			gameobject_list.insertAtTail(newNimble);
-
-			
-		}
-
-		//bullet & plane
-		for (int countBullet = 0; countBullet < bullet_list.returnSize(); countBullet++)
-		{
-			GameObject* tempBull = bullet_list.returnAt(countBullet);
-			//player bullet & enemy plane
-			if (tempBull->alive != false && tempBull->isBulletFromEnemy == false) 
+			gameFrames++;
+			if (SDL_PollEvent(&window_event))
 			{
-				for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
+
+				if (SDL_QUIT == window_event.type) {
+					flag = false;
+					break;
+				}
+
+				if (SDL_KEYDOWN == window_event.type)
 				{
-					GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
-					if (tempEnem->alive != false)
+					if (SDLK_DOWN == window_event.key.keysym.sym) {
+						//player1->unitBounds->y = player1->unitBounds->y + 5;
+						player1->Translate(0, 2);
+					}
+					if (SDLK_UP == window_event.key.keysym.sym) {
+						//player1->unitBounds->y = player1->unitBounds->y - 5;
+						player1->Translate(0, -2);
+					}
+					if (SDLK_LEFT == window_event.key.keysym.sym) {
+						//player1->unitBounds->x = player1->unitBounds->x - 5;
+						player1->Translate(-2, 0);
+					}
+					if (SDLK_RIGHT == window_event.key.keysym.sym) {
+						//player1->unitBounds->x = player1->unitBounds->x + 5;
+						player1->Translate(2, 0);
+					}
+					if (SDLK_SPACE == window_event.key.keysym.sym)
 					{
-						xDiff = tempBull->unitBounds->x - tempEnem->unitBounds->x;
-						yDiff = tempBull->unitBounds->y - tempEnem->unitBounds->y;
+						GameObject* bulletA = new Bullet(player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+						GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
+						bulletA->isBulletFromEnemy = false;
+						bulletB->isBulletFromEnemy = false;
+						bulletA->setImage(gameRenderer, "media/player_bullet.png");
+						bulletB->setImage(gameRenderer, "media/player_bullet.png");
+						bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+						bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
 
-						 if (tempEnem->isRanger == false)
-						 {
+						bullet_list.insertAtTail(bulletA);
+						bullet_list.insertAtTail(bulletB);
+					}
 
-							 if (yDiff <= 200 && yDiff >= 128)
-							 {
-								 if (xDiff >= -7 && xDiff <= 71)
-								 {
-									 if (xDiff >= -7 && xDiff <= 32)
-									 {
-										 tempEnem->Translate(2, 0);
-									 }
-									 else if (xDiff >=33 && xDiff<=71)
-									 {
-										 tempEnem->Translate(-2, 0);
-									 }
-								 }
-							 }
-							 if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
-							 {
-								 tempBull->alive = false;
-								 tempEnem->Health--;
-								 //tempEnem->alive = false;
-							 }
-						 }
-						 else if (tempEnem->isRanger == true)
-						 {
-							 if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
-							 {
-								 tempBull->alive = false;
-								 tempEnem->Health--;
-								 //tempEnem->alive = false;
-							 }
-						 }
-						
+					if (SDLK_b == window_event.key.keysym.sym) {
+
+
 					}
 				}
 			}
-			//enemy bullet and player plane
-			else if (tempBull->alive != false && tempBull->isBulletFromEnemy == true)
-			{
-				xDiff = tempBull->unitBounds->x - player1->unitBounds->x;
-				yDiff = tempBull->unitBounds->y - player1->unitBounds->y;
 
-				if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 62)
-				{
-					//game_running = false;
-					std::cout << "PlayerHit"<<std::endl;
-				}
+			if (gameFrames % 250 == 0)
+			{
+				random = rand() % 1216;
+				GameObject* newRanger = new Ranger(random, 0);
+				//add bullet mechanism here
+				//set bullet from enemy to true
+
+				newRanger->setImage(gameRenderer, "media/rangerEnem.png");
+				newRanger->setUnitBounds(64, 64, random, 0);
+
+				newRanger->isRanger = true;
+				gameobject_list.insertAtTail(newRanger);
+
 
 			}
-			
-		}
-		//player and enemy plane
-		for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
-		{
-			GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
-			if (tempEnem->alive != false)
-			{
-				xDiff = tempEnem->unitBounds->x - player1->unitBounds->x;
-				yDiff = tempEnem->unitBounds->y - player1->unitBounds->y;
 
-				if (xDiff >= -62 && xDiff <= 62 && yDiff >= 0 && yDiff <= 62)
-				{
-					//game_running = false;
-					std::cout << "PlayerHit" << std::endl;
-				}
+			if (gameFrames % 400 == 0)
+			{
+
+				random = rand() % 1216;
+				GameObject* newNimble = new Nimble(520, 0);
+				//add bullet mechanism here
+				//set bullet from enemy to true
+
+				newNimble->setImage(gameRenderer, "media/nimbleEnem.png");
+				newNimble->setUnitBounds(64, 64, 520, 0);
+				newNimble->isRanger = false;
+
+				gameobject_list.insertAtTail(newNimble);
+
+
 			}
-		}
 
-		//player missle and enemy plane
-		for (int countMissle = 0; countMissle < missile_list.returnSize(); countMissle++)
-		{
-			GameObject* tempMiss = missile_list.returnAt(countMissle);
-			//player bullet & enemy plane
-			if (tempMiss != nullptr)
+			//bullet & plane
+			for (int countBullet = 0; countBullet < bullet_list.returnSize(); countBullet++)
 			{
-				if (tempMiss->alive != false)
+				GameObject* tempBull = bullet_list.returnAt(countBullet);
+				//player bullet & enemy plane
+				if (tempBull->alive != false && tempBull->isBulletFromEnemy == false)
 				{
 					for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
 					{
 						GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
 						if (tempEnem->alive != false)
 						{
-							xDiff = tempMiss->unitBounds->x - tempEnem->unitBounds->x;
-							yDiff = tempMiss->unitBounds->y - tempEnem->unitBounds->y;
+							xDiff = tempBull->unitBounds->x - tempEnem->unitBounds->x;
+							yDiff = tempBull->unitBounds->y - tempEnem->unitBounds->y;
 
-
-							if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
+							if (tempEnem->isRanger == false)
 							{
-								tempMiss->alive = false;
-								tempEnem->Health--;
-								//tempEnem->alive = false;
+
+								if (yDiff <= 200 && yDiff >= 128)
+								{
+									if (xDiff >= -7 && xDiff <= 71)
+									{
+										if (xDiff >= -7 && xDiff <= 32)
+										{
+											tempEnem->Translate(2, 0);
+										}
+										else if (xDiff >= 33 && xDiff <= 71)
+										{
+											tempEnem->Translate(-2, 0);
+										}
+									}
+								}
+								if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
+								{
+									tempBull->alive = false;
+									tempEnem->Health--;
+									//tempEnem->alive = false;
+								}
 							}
+							else if (tempEnem->isRanger == true)
+							{
+								if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
+								{
+									tempBull->alive = false;
+									tempEnem->Health--;
+									//tempEnem->alive = false;
+								}
+							}
+
 						}
 					}
 				}
-			}
-		}
-
-		Node* tempBullet = bullet_list.returnHead();
-		Node* tempEnem = gameobject_list.returnHead();
-		Node* tempMiss = missile_list.returnHead();
-		
-		player1->Move();
-		SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
-		SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
-
-		while (tempBullet != nullptr)
-		{
-			if (tempBullet != nullptr) {
-				tempBullet->gmObject->Move();
-			}
-
-			if (tempBullet->gmObject->Alive() == true)
-			{
-				SDL_RenderCopy(gameRenderer, tempBullet->gmObject->unitTexture, NULL, tempBullet->gmObject->unitBounds);
-
-			}
-
-			if (tempBullet != nullptr)
-			{
-				tempBullet = tempBullet->next;
-			}
-		}
-
-		while (tempMiss != nullptr)
-		{
-			if (tempMiss != nullptr) {
-				tempMiss->gmObject->Move();
-			}
-
-			if (tempMiss->gmObject->Alive() == true)
-			{
-				SDL_RenderCopy(gameRenderer, tempMiss->gmObject->unitTexture, NULL, tempMiss->gmObject->unitBounds);
-
-			}
-
-			if (tempMiss != nullptr)
-			{
-				tempMiss = tempMiss->next;
-			}
-		}
-
-		while (tempEnem != nullptr)
-		{
-			if (tempEnem != nullptr) {
-				tempEnem->gmObject->Move();
-			}
-
-			if (tempEnem->gmObject->Alive() == true)
-			{
-				if (gameFrames % 5000 == 0)
+				//enemy bullet and player plane
+				else if (tempBull->alive != false && tempBull->isBulletFromEnemy == true)
 				{
-					random = rand() % 10;
-					if (random < 6)
+					xDiff = tempBull->unitBounds->x - player1->unitBounds->x;
+					yDiff = tempBull->unitBounds->y - player1->unitBounds->y;
+
+					if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 62)
 					{
-						GameObject* enemyBulletA = new Bullet(tempEnem->gmObject->x + 20, tempEnem->gmObject->y + 75);
-						GameObject* enemyBulletB = new Bullet(tempEnem->gmObject->x + 40, tempEnem->gmObject->y + 75);
-						enemyBulletA->isBulletFromEnemy = true;
-						enemyBulletB->isBulletFromEnemy = true;
+						//game_running = false;
+						std::cout << "PlayerHit" << std::endl;
+					}
 
-						if (tempEnem->gmObject->isRanger == true)
-						{
-							enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
-							enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
-						}
-						else
-						{
-							enemyBulletA->setImage(gameRenderer, "media/nimble_bullet.png");
-							enemyBulletB->setImage(gameRenderer, "media/nimble_bullet.png");
-						}
-
-						enemyBulletA->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 20, tempEnem->gmObject->unitBounds->y + 75);
-						enemyBulletB->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 40, tempEnem->gmObject->unitBounds->y + 75);
-
-						bullet_list.insertAtTail(enemyBulletA);
-						bullet_list.insertAtTail(enemyBulletB);
-					}	
 				}
-				else if (gameFrames % 2000 == 0)
+
+			}
+			//player and enemy plane
+			for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
+			{
+				GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
+				if (tempEnem->alive != false)
 				{
-					random = rand() % 10;
-					if (random < 6)
+					xDiff = tempEnem->unitBounds->x - player1->unitBounds->x;
+					yDiff = tempEnem->unitBounds->y - player1->unitBounds->y;
+
+					if (xDiff >= -62 && xDiff <= 62 && yDiff >= 0 && yDiff <= 62)
 					{
-						GameObject* enemyBulletA = new Bullet(tempEnem->gmObject->x + 20, tempEnem->gmObject->y + 75);
-						GameObject* enemyBulletB = new Bullet(tempEnem->gmObject->x + 40, tempEnem->gmObject->y + 75);
-						enemyBulletA->isBulletFromEnemy = true;
-						enemyBulletB->isBulletFromEnemy = true;
-
-						if (tempEnem->gmObject->isRanger == true)
-						{
-							enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
-							enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
-						}
-						else
-						{
-							enemyBulletA->setImage(gameRenderer, "media/nimble_bullet.png");
-							enemyBulletB->setImage(gameRenderer, "media/nimble_bullet.png");
-						}
-
-						enemyBulletA->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 20, tempEnem->gmObject->unitBounds->y + 75);
-						enemyBulletB->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 40, tempEnem->gmObject->unitBounds->y + 75);
-
-						bullet_list.insertAtTail(enemyBulletA);
-						bullet_list.insertAtTail(enemyBulletB);
+						//game_running = false;
+						std::cout << "PlayerHit" << std::endl;
 					}
 				}
-				SDL_RenderCopy(gameRenderer, tempEnem->gmObject->unitTexture, NULL, tempEnem->gmObject->unitBounds);
-
 			}
 
-			if (tempEnem != nullptr)
+			Node* tempBullet = bullet_list.returnHead();
+			Node* tempEnem = gameobject_list.returnHead();
+
+			player1->Move();
+			SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
+			SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
+			while (tempBullet != nullptr)
 			{
-				tempEnem = tempEnem->next;
+				if (tempBullet != nullptr) {
+					tempBullet->gmObject->Move();
+				}
+
+				if (tempBullet->gmObject->Alive() == true)
+				{
+					SDL_RenderCopy(gameRenderer, tempBullet->gmObject->unitTexture, NULL, tempBullet->gmObject->unitBounds);
+
+				}
+
+				if (tempBullet != nullptr)
+				{
+					tempBullet = tempBullet->next;
+				}
 			}
+
+			while (tempEnem != nullptr)
+			{
+				if (tempEnem != nullptr) {
+					tempEnem->gmObject->Move();
+				}
+
+				if (tempEnem->gmObject->Alive() == true)
+				{
+					if (gameFrames % 5000 == 0)
+					{
+						random = rand() % 10;
+						if (random < 6)
+						{
+							GameObject* enemyBulletA = new Bullet(tempEnem->gmObject->x + 20, tempEnem->gmObject->y + 75);
+							GameObject* enemyBulletB = new Bullet(tempEnem->gmObject->x + 40, tempEnem->gmObject->y + 75);
+							enemyBulletA->isBulletFromEnemy = true;
+							enemyBulletB->isBulletFromEnemy = true;
+
+							if (tempEnem->gmObject->isRanger == true)
+							{
+								enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
+								enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
+							}
+							else
+							{
+								enemyBulletA->setImage(gameRenderer, "media/nimble_bullet.png");
+								enemyBulletB->setImage(gameRenderer, "media/nimble_bullet.png");
+							}
+
+							enemyBulletA->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 20, tempEnem->gmObject->unitBounds->y + 75);
+							enemyBulletB->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 40, tempEnem->gmObject->unitBounds->y + 75);
+
+							bullet_list.insertAtTail(enemyBulletA);
+							bullet_list.insertAtTail(enemyBulletB);
+						}
+					}
+					else if (gameFrames % 2000 == 0)
+					{
+						random = rand() % 10;
+						if (random < 6)
+						{
+							GameObject* enemyBulletA = new Bullet(tempEnem->gmObject->x + 20, tempEnem->gmObject->y + 75);
+							GameObject* enemyBulletB = new Bullet(tempEnem->gmObject->x + 40, tempEnem->gmObject->y + 75);
+							enemyBulletA->isBulletFromEnemy = true;
+							enemyBulletB->isBulletFromEnemy = true;
+
+							if (tempEnem->gmObject->isRanger == true)
+							{
+								enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
+								enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
+							}
+							else
+							{
+								enemyBulletA->setImage(gameRenderer, "media/nimble_bullet.png");
+								enemyBulletB->setImage(gameRenderer, "media/nimble_bullet.png");
+							}
+
+							enemyBulletA->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 20, tempEnem->gmObject->unitBounds->y + 75);
+							enemyBulletB->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 40, tempEnem->gmObject->unitBounds->y + 75);
+
+							bullet_list.insertAtTail(enemyBulletA);
+							bullet_list.insertAtTail(enemyBulletB);
+						}
+					}
+					SDL_RenderCopy(gameRenderer, tempEnem->gmObject->unitTexture, NULL, tempEnem->gmObject->unitBounds);
+
+				}
+
+				if (tempEnem != nullptr)
+				{
+					tempEnem = tempEnem->next;
+				}
+			}
+
+
+
+			SDL_RenderPresent(gameRenderer);
+			SDL_RenderClear(gameRenderer);
+			//SDL_UpdateWindowSurface(window);
+
+			for (int count = 0; count < bullet_list.returnSize(); count++)
+			{
+				if (bullet_list.returnAt(count)->Alive() == false)
+				{
+					SDL_DestroyTexture(bullet_list.returnAt(count)->unitTexture);
+					bullet_list.deleteNode(count);
+					// now takes into account the middle of the list
+					//gameobject_list.deleteNodeHead();
+				}
+			}
+
+			for (int count = 0; count < gameobject_list.returnSize(); count++)
+			{
+				if (gameobject_list.returnAt(count)->Alive() == false)
+				{
+					SDL_DestroyTexture(gameobject_list.returnAt(count)->unitTexture);
+					gameobject_list.deleteNode(count);
+					// now takes into account the middle of the list
+					//gameobject_list.deleteNodeHead();
+				}
+			}
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
 		}
 
+		SDL_FreeSurface(background);
+		SDL_FreeSurface(WindowSurface);
 
+		background = NULL;
+		WindowSurface = NULL;
 
-		SDL_RenderPresent(gameRenderer);
-		SDL_RenderClear(gameRenderer); 
-		//SDL_UpdateWindowSurface(window);
+		SDL_DestroyWindow(window);
+		SDL_DestroyRenderer(gameRenderer);
 
-		for (int count = 0; count < bullet_list.returnSize(); count++)
-		{
-			if (bullet_list.returnAt(count)->Alive() == false)
-			{
-				SDL_DestroyTexture(bullet_list.returnAt(count)->unitTexture);
-				bullet_list.deleteNode(count);
-				// now takes into account the middle of the list
-				//gameobject_list.deleteNodeHead();
-			}
-		}
+		SDL_Quit();
 
-		for (int count = 0; count < gameobject_list.returnSize(); count++)
-		{
-			if (gameobject_list.returnAt(count)->Alive() == false)
-			{
-				SDL_DestroyTexture(gameobject_list.returnAt(count)->unitTexture);
-				gameobject_list.deleteNode(count);
-				// now takes into account the middle of the list
-				//gameobject_list.deleteNodeHead();
-			}
-		}
-		
-		for (int count = 0; count < missile_list.returnSize(); count++)
-		{
-			if (missile_list.returnAt(count)->Alive() == false)
-			{
-				SDL_DestroyTexture(missile_list.returnAt(count)->unitTexture);
-				missile_list.deleteNode(count);
-				// now takes into account the middle of the list
-				//gameobject_list.deleteNodeHead();
-			}
-		}
-
-		if (gameFrames % 666 == 0)
-		{
-			if (player1->missleCount < 10) 
-			{
-				player1->missleCount = player1->missleCount + 1;
-			}
-		}
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(2));
+		this_thread::sleep_for(10000ms);
+		return EXIT_SUCCESS;
 	}
-
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(WindowSurface);
-
-	background = NULL;
-	WindowSurface = NULL;
-
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(gameRenderer);
-
-	SDL_Quit();
-
-	this_thread::sleep_for(10000ms);
-	return EXIT_SUCCESS;
 }
