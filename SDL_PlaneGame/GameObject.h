@@ -6,6 +6,7 @@
 #include <SDL_image.h>
 
 
+
 using namespace std;
 
 
@@ -30,7 +31,6 @@ public:
 	SDL_Rect* unitBounds = new SDL_Rect();
 	SDL_Texture* unitTexture = NULL;
 
-
 	//gameObject();
 	GameObject(int x, int y);
 	GameObject();
@@ -41,7 +41,8 @@ public:
 	void changeAliveStatus();
 	//int getHealth();
 	void setImage(SDL_Renderer* gRender, string path);
-	void setUnitBounds(int x, int y);
+	void setUnitBounds(int widthBound, int heightBound, int xPos, int yPos);
+	//void fireGun(int xBound, int yBound);
 	//void setSDLRECT(int x, int y);
 
 	void Translate(float xVal, float yVal);

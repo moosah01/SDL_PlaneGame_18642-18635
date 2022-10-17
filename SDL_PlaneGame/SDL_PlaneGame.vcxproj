@@ -132,13 +132,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="doublyList.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Nimble.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Ranger.cpp" />
     <ClCompile Include="SDL_PlaneGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="doublyList.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Nimble.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Ranger.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

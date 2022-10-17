@@ -1,8 +1,9 @@
 #include "gameObject.h"
 #include <SDL.h>
 #include <SDL_image.h>
-#include "SDL_PlaneGame.cpp"
-
+#include <string>
+#include <iostream>
+#include "Bullet.h"
 
 GameObject::GameObject(int x, int y)
 {
@@ -56,14 +57,32 @@ GameObject::GameObject()
 
 void GameObject::setImage(SDL_Renderer* gRender, string path)
 {
-	unitTexture = IMG_LoadTexture(gRender, "media/player_sprite.png");
+	char* c = const_cast<char*>(path.c_str());
+	unitTexture = IMG_LoadTexture(gRender, c);
 
 }
 
-void GameObject::setUnitBounds(int xBound, int yBound)
+void GameObject::setUnitBounds(int widthBound, int heightBound, int xPos, int yPos)
 {
-	unitBounds->w = xBound;
-	unitBounds->h = yBound;
-	unitBounds->x = 200;
-	unitBounds->y = 1040 / 2; 
+	unitBounds->w = widthBound;
+	unitBounds->h = heightBound;
+	unitBounds->x = xPos;
+	unitBounds->y = yPos; 
 }
+
+//void GameObject::fireGun(int xBound, int yBound)
+//{
+//
+//	GameObject* enemyBulletA = new Bullet(xBound, yBound);
+//	GameObject* enemyBulletB = new Bullet(xBound, yBound);
+//
+//	enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
+//	enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
+//
+//	enemyBulletA->setUnitBounds(8, 16, xBound, yBound);
+//	enemyBulletB->setUnitBounds(8, 16, xBound, yBound);
+//
+//	bullet_list.insertAtTail(enemyBulletA);
+//	bullet_list.insertAtTail(enemyBulletB);
+//
+//}

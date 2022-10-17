@@ -4,17 +4,32 @@
 #include <SDL_image.h>
 #include "GameObject.h"
 #include "Player.h"
+#include "doublyList.h"
+#include "Bullet.h"
+#include "Node.h"
+#include "Ranger.h"
+#include "Nimble.h"
+#include <Windows.h>
+#include <thread>
+
+
 
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
 
+
 int main(int argc, char* argv) {
 
 	SDL_Renderer* gameRenderer;
+	doublyList gameobject_list;
+	doublyList bullet_list;
+
 	SDL_Surface* background;
 	SDL_Surface* WindowSurface;
+	
+
 	GameObject* player1 = new Player(200, 520);
 	
 
@@ -38,7 +53,7 @@ int main(int argc, char* argv) {
 
 	SDL_Event window_event;
 
-	background = IMG_Load("media/gameBG.bmp");
+	background = IMG_Load("media/gameBG.jpg");
 	
 
 	if (background == NULL) {
@@ -52,9 +67,9 @@ int main(int argc, char* argv) {
 	//Load Player Plane
 	//SDL_Texture* Player = NULL;
 	//Player = IMG_LoadTexture(R, "media/player_sprite.png");
-	SDL_Texture* gameBG = IMG_LoadTexture(gameRenderer, "media/gameBG.bmp");
+	SDL_Texture* gameBG = IMG_LoadTexture(gameRenderer, "media/gameBG.jpg");
 
-	player1->setUnitBounds(64, 64);
+	player1->setUnitBounds(64, 64, 200, 520);
 
 	/*SDL_Rect* Player_Rect = new SDL_Rect();
 	Player_Rect->w = 64; 
@@ -67,16 +82,23 @@ int main(int argc, char* argv) {
 	Background_Rect->h = SCREEN_HEIGHT;
 	Background_Rect->x = 0;
 	Background_Rect->y = 0;
+	int bullXBound = 0;
+	int bullYBound = 0;
+	int gameFrames = 0;
+	int random = 0;
 
-	while (true) {
-
-		if (SDL_PollEvent(&window_event)) {
+	while (true) 
+	{
+		gameFrames++;
+		if (SDL_PollEvent(&window_event)) 
+		{
 
 			if (SDL_QUIT == window_event.type) {
 				break;
 			}
 
-			if (SDL_KEYDOWN == window_event.type) {
+			if (SDL_KEYDOWN == window_event.type) 
+			{
 				if (SDLK_DOWN == window_event.key.keysym.sym) {
 					//player1->unitBounds->y = player1->unitBounds->y + 5;
 					player1->Translate(0, 2);
@@ -93,25 +115,146 @@ int main(int argc, char* argv) {
 					//player1->unitBounds->x = player1->unitBounds->x + 5;
 					player1->Translate(2, 0);
 				}
-				if (SDLK_SPACE == window_event.key.keysym.sym) {
+				if (SDLK_SPACE == window_event.key.keysym.sym) 
+				{
+					GameObject* bulletA = new Bullet(player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+					GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
+					bulletA->isBulletFromEnemy = false;
+					bulletB->isBulletFromEnemy = false;
+					bulletA->setImage(gameRenderer, "media/player_bullet.png");
+					bulletB->setImage(gameRenderer, "media/player_bullet.png");
+					bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+					bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
 
+					bullet_list.insertAtTail(bulletA);
+					bullet_list.insertAtTail(bulletB);
 				}
 				if (SDLK_b == window_event.key.keysym.sym) {
+					
 
 				}
 			}
+		}
+
+		if (gameFrames % 250 == 0)
+		{
+			random = rand() % 1216;
+			GameObject* newRanger = new Ranger(random, 0);
+			//add bullet mechanism here
+			//set bullet from enemy to true
+
+			GameObject* enemyBulletA = new Bullet(newRanger->x+20, newRanger->y + 75);
+			GameObject* enemyBulletB = new Bullet(newRanger->x+40, newRanger->y + 75);
+			enemyBulletA->isBulletFromEnemy = true;
+			enemyBulletB->isBulletFromEnemy = true;
+
+			newRanger->setImage(gameRenderer, "media/rangerEnem.png");
+			newRanger->setUnitBounds(64, 64, random, 0);
+
+			enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
+			enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
+
+	
+			
+			enemyBulletA->setUnitBounds(8, 16, newRanger->unitBounds->x + 20, newRanger->unitBounds->y + 75);
+			enemyBulletB->setUnitBounds(8, 16, newRanger->unitBounds->x + 40, newRanger->unitBounds->y + 75);
+
+			bullet_list.insertAtTail(enemyBulletA);
+			bullet_list.insertAtTail(enemyBulletB);
+
+			
+			gameobject_list.insertAtTail(newRanger);
+
+			
 
 		}
 
-		//Player Render
+		if (gameFrames %  400 == 0)
+		{
+
+			random = rand() % 1216;
+			GameObject* newNimble= new Nimble(random, 0);
+			//add bullet mechanism here
+			//set bullet from enemy to true
+
+			gameobject_list.insertAtTail(newNimble);
+
+			newNimble->setImage(gameRenderer, "media/nimbleEnem.png");
+			newNimble->setUnitBounds(64, 64, random, 0);
+		}
+
+
+		Node* tempBullet = bullet_list.returnHead();
+		Node* tempEnem = gameobject_list.returnHead();
+
 
 		
+		player1->Move();
 		SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
 		SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
-		player1->Move();
+		while (tempBullet != nullptr)
+		{
+			if (tempBullet != nullptr) {
+				tempBullet->gmObject->Move();
+			}
+
+			if (tempBullet->gmObject->Alive() == true)
+			{
+				SDL_RenderCopy(gameRenderer, tempBullet->gmObject->unitTexture, NULL, tempBullet->gmObject->unitBounds);
+
+			}
+
+			if (tempBullet != nullptr)
+			{
+				tempBullet = tempBullet->next;
+			}
+		}
+
+		while (tempEnem != nullptr)
+		{
+			if (tempEnem != nullptr) {
+				tempEnem->gmObject->Move();
+			}
+
+			if (tempEnem->gmObject->Alive() == true)
+			{
+				SDL_RenderCopy(gameRenderer, tempEnem->gmObject->unitTexture, NULL, tempEnem->gmObject->unitBounds);
+
+			}
+
+			if (tempEnem != nullptr)
+			{
+				tempEnem = tempEnem->next;
+			}
+		}
+
 		SDL_RenderPresent(gameRenderer);
-		SDL_RenderClear(gameRenderer);
+		SDL_RenderClear(gameRenderer); 
 		//SDL_UpdateWindowSurface(window);
+
+		for (int count = 0; count < bullet_list.returnSize(); count++)
+		{
+			if (bullet_list.returnAt(count)->Alive() == false)
+			{
+				SDL_DestroyTexture(bullet_list.returnAt(count)->unitTexture);
+				bullet_list.deleteNode(count);
+				// now takes into account the middle of the list
+				//gameobject_list.deleteNodeHead();
+			}
+		}
+
+		for (int count = 0; count < gameobject_list.returnSize(); count++)
+		{
+			if (gameobject_list.returnAt(count)->Alive() == false)
+			{
+				SDL_DestroyTexture(gameobject_list.returnAt(count)->unitTexture);
+				gameobject_list.deleteNode(count);
+				// now takes into account the middle of the list
+				//gameobject_list.deleteNodeHead();
+			}
+		}
+		
+		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}
 
 	SDL_FreeSurface(background);
