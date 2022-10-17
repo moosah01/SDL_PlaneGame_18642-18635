@@ -7,6 +7,8 @@ Nimble::Nimble(int x, int y) :GameObject(x, y)
 	alive = true;
 	this->isHit = false;
 	canDodge = true;
+	this->Health = 1;
+	this->isRanger = false;
 
 	ascii_art.append(L" ^^ ");
 	ascii_art.append(L"%  %");
@@ -44,7 +46,12 @@ wstring Nimble::Art()
 void Nimble::Move()
 {
 
-	unitBounds->x = this->x + (int)tx;
+	if (Health < 1)
+	{
+		alive = false;
+	}
+
+	unitBounds->x = this->unitBounds->x + (int)tx;
 	//y = y + (int)ty;
 
 	if (unitBounds->x < 0)
@@ -65,8 +72,8 @@ void Nimble::Move()
 		alive = false;
 	}
 
-	//tx *= frictionCoff;
-	//ty *= frictionCoff;
+	tx *= frictionCoff;
+	ty *= frictionCoff;
 }
 
 Nimble::~Nimble() {
