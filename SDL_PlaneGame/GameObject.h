@@ -27,6 +27,7 @@ public:
 	bool alive;
 	bool isBulletFromEnemy;
 	bool canDodge = false;
+	bool isRanger = false;
 	float frictionCoff = 0.995;
 	SDL_Rect* unitBounds = new SDL_Rect();
 	SDL_Texture* unitTexture = NULL;

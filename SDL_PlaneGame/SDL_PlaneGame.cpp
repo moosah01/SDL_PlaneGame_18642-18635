@@ -143,26 +143,10 @@ int main(int argc, char* argv) {
 			//add bullet mechanism here
 			//set bullet from enemy to true
 
-			GameObject* enemyBulletA = new Bullet(newRanger->x+20, newRanger->y + 75);
-			GameObject* enemyBulletB = new Bullet(newRanger->x+40, newRanger->y + 75);
-			enemyBulletA->isBulletFromEnemy = true;
-			enemyBulletB->isBulletFromEnemy = true;
-
 			newRanger->setImage(gameRenderer, "media/rangerEnem.png");
 			newRanger->setUnitBounds(64, 64, random, 0);
 
-			enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
-			enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
-
-	
-			
-			enemyBulletA->setUnitBounds(8, 16, newRanger->unitBounds->x + 20, newRanger->unitBounds->y + 75);
-			enemyBulletB->setUnitBounds(8, 16, newRanger->unitBounds->x + 40, newRanger->unitBounds->y + 75);
-
-			bullet_list.insertAtTail(enemyBulletA);
-			bullet_list.insertAtTail(enemyBulletB);
-
-			
+			newRanger->isRanger = true;
 			gameobject_list.insertAtTail(newRanger);
 
 			
@@ -177,10 +161,13 @@ int main(int argc, char* argv) {
 			//add bullet mechanism here
 			//set bullet from enemy to true
 
-			gameobject_list.insertAtTail(newNimble);
-
 			newNimble->setImage(gameRenderer, "media/nimbleEnem.png");
 			newNimble->setUnitBounds(64, 64, random, 0);
+			newNimble->isRanger = false;
+
+			gameobject_list.insertAtTail(newNimble);
+
+			
 		}
 
 
@@ -218,6 +205,62 @@ int main(int argc, char* argv) {
 
 			if (tempEnem->gmObject->Alive() == true)
 			{
+				if (gameFrames % 250 == 0)
+				{
+					random = rand() % 10;
+					if (random < 6)
+					{
+						GameObject* enemyBulletA = new Bullet(tempEnem->gmObject->x + 20, tempEnem->gmObject->y + 75);
+						GameObject* enemyBulletB = new Bullet(tempEnem->gmObject->x + 40, tempEnem->gmObject->y + 75);
+						enemyBulletA->isBulletFromEnemy = true;
+						enemyBulletB->isBulletFromEnemy = true;
+
+						if (tempEnem->gmObject->isRanger == true)
+						{
+							enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
+							enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
+						}
+						else
+						{
+							enemyBulletA->setImage(gameRenderer, "media/nimble_bullet.png");
+							enemyBulletB->setImage(gameRenderer, "media/nimble_bullet.png");
+						}
+
+						enemyBulletA->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 20, tempEnem->gmObject->unitBounds->y + 75);
+						enemyBulletB->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 40, tempEnem->gmObject->unitBounds->y + 75);
+
+						bullet_list.insertAtTail(enemyBulletA);
+						bullet_list.insertAtTail(enemyBulletB);
+					}	
+				}
+				else if (gameFrames % 400 == 0)
+				{
+					random = rand() % 10;
+					if (random < 6)
+					{
+						GameObject* enemyBulletA = new Bullet(tempEnem->gmObject->x + 20, tempEnem->gmObject->y + 75);
+						GameObject* enemyBulletB = new Bullet(tempEnem->gmObject->x + 40, tempEnem->gmObject->y + 75);
+						enemyBulletA->isBulletFromEnemy = true;
+						enemyBulletB->isBulletFromEnemy = true;
+
+						if (tempEnem->gmObject->isRanger == true)
+						{
+							enemyBulletA->setImage(gameRenderer, "media/ranger_bullet.png");
+							enemyBulletB->setImage(gameRenderer, "media/ranger_bullet.png");
+						}
+						else
+						{
+							enemyBulletA->setImage(gameRenderer, "media/nimble_bullet.png");
+							enemyBulletB->setImage(gameRenderer, "media/nimble_bullet.png");
+						}
+
+						enemyBulletA->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 20, tempEnem->gmObject->unitBounds->y + 75);
+						enemyBulletB->setUnitBounds(8, 16, tempEnem->gmObject->unitBounds->x + 40, tempEnem->gmObject->unitBounds->y + 75);
+
+						bullet_list.insertAtTail(enemyBulletA);
+						bullet_list.insertAtTail(enemyBulletB);
+					}
+				}
 				SDL_RenderCopy(gameRenderer, tempEnem->gmObject->unitTexture, NULL, tempEnem->gmObject->unitBounds);
 
 			}
