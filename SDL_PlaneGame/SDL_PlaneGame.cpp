@@ -11,6 +11,7 @@
 #include "Nimble.h"
 #include <Windows.h>
 #include <thread>
+#include "Missle.h"
 
 
 
@@ -20,11 +21,13 @@ const int SCREEN_HEIGHT = 720;
 
 
 
-int main(int argc, char* argv) {
+int main(int argc, char* argv) 
+{
 
 	SDL_Renderer* gameRenderer;
 	doublyList gameobject_list;
 	doublyList bullet_list;
+	doublyList missile_list;
 
 	SDL_Surface* background;
 	SDL_Surface* WindowSurface;
@@ -121,22 +124,32 @@ int main(int argc, char* argv) {
 				}
 				if (SDLK_SPACE == window_event.key.keysym.sym) 
 				{
-					GameObject* bulletA = new Bullet(player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+					GameObject* bulletA = new Bullet(player1->unitBounds->x + 16, player1->unitBounds->y - 16);
 					GameObject* bulletB = new Bullet(player1->unitBounds->x + 40, player1->unitBounds->y - 16);
 					bulletA->isBulletFromEnemy = false;
 					bulletB->isBulletFromEnemy = false;
 					bulletA->setImage(gameRenderer, "media/player_bullet.png");
 					bulletB->setImage(gameRenderer, "media/player_bullet.png");
-					bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 20, player1->unitBounds->y - 16);
+					bulletA->setUnitBounds(8, 16, player1->unitBounds->x + 16, player1->unitBounds->y - 16);
 					bulletB->setUnitBounds(8, 16, player1->unitBounds->x + 40, player1->unitBounds->y - 16);
 
 					bullet_list.insertAtTail(bulletA);
 					bullet_list.insertAtTail(bulletB);
 				}
 
-				if (SDLK_b == window_event.key.keysym.sym) {
+				if (SDLK_b == window_event.key.keysym.sym) 
+				{
 					
+					if (player1->missleCount <= 10 && player1->missleCount >=1) 
+					{
+						std::cout << player1->missleCount << std::endl;
+						GameObject* missle = new Missle(player1->unitBounds->x + 32, player1->unitBounds->y - 16);
+						missle->setImage(gameRenderer, "media/rocket.png");
+						missle->setUnitBounds(16, 32, player1->unitBounds->x + 24, player1->unitBounds->y - 16);
 
+						missile_list.insertAtTail(missle);			
+						player1->missleCount = player1->missleCount--;
+					}
 				}
 			}
 		}
@@ -258,12 +271,44 @@ int main(int argc, char* argv) {
 			}
 		}
 
+		//player missle and enemy plane
+		for (int countMissle = 0; countMissle < missile_list.returnSize(); countMissle++)
+		{
+			GameObject* tempMiss = missile_list.returnAt(countMissle);
+			//player bullet & enemy plane
+			if (tempMiss != nullptr)
+			{
+				if (tempMiss->alive != false)
+				{
+					for (int countEnemy = 0; countEnemy < gameobject_list.returnSize(); countEnemy++)
+					{
+						GameObject* tempEnem = gameobject_list.returnAt(countEnemy);
+						if (tempEnem->alive != false)
+						{
+							xDiff = tempMiss->unitBounds->x - tempEnem->unitBounds->x;
+							yDiff = tempMiss->unitBounds->y - tempEnem->unitBounds->y;
+
+
+							if (xDiff >= -6 && xDiff <= 70 && yDiff >= 0 && yDiff <= 64)
+							{
+								tempMiss->alive = false;
+								tempEnem->Health--;
+								//tempEnem->alive = false;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		Node* tempBullet = bullet_list.returnHead();
 		Node* tempEnem = gameobject_list.returnHead();
+		Node* tempMiss = missile_list.returnHead();
 		
 		player1->Move();
 		SDL_RenderCopy(gameRenderer, gameBG, NULL, Background_Rect);
 		SDL_RenderCopy(gameRenderer, player1->unitTexture, NULL, player1->unitBounds);
+
 		while (tempBullet != nullptr)
 		{
 			if (tempBullet != nullptr) {
@@ -279,6 +324,24 @@ int main(int argc, char* argv) {
 			if (tempBullet != nullptr)
 			{
 				tempBullet = tempBullet->next;
+			}
+		}
+
+		while (tempMiss != nullptr)
+		{
+			if (tempMiss != nullptr) {
+				tempMiss->gmObject->Move();
+			}
+
+			if (tempMiss->gmObject->Alive() == true)
+			{
+				SDL_RenderCopy(gameRenderer, tempMiss->gmObject->unitTexture, NULL, tempMiss->gmObject->unitBounds);
+
+			}
+
+			if (tempMiss != nullptr)
+			{
+				tempMiss = tempMiss->next;
 			}
 		}
 
@@ -384,6 +447,25 @@ int main(int argc, char* argv) {
 			}
 		}
 		
+		for (int count = 0; count < missile_list.returnSize(); count++)
+		{
+			if (missile_list.returnAt(count)->Alive() == false)
+			{
+				SDL_DestroyTexture(missile_list.returnAt(count)->unitTexture);
+				missile_list.deleteNode(count);
+				// now takes into account the middle of the list
+				//gameobject_list.deleteNodeHead();
+			}
+		}
+
+		if (gameFrames % 666 == 0)
+		{
+			if (player1->missleCount < 10) 
+			{
+				player1->missleCount = player1->missleCount + 1;
+			}
+		}
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}
 
