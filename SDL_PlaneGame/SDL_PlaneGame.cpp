@@ -36,7 +36,8 @@ int main(int argc, char* argv)
 	GameObject* player1 = new Player(200, 520);
 	
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) 
+	{
 
 		std::cout << "SDL Failed to initialize. Error Code : " << SDL_GetError() << std::endl;
 
